@@ -1,2 +1,2 @@
-# psh_scripts
+# Powershell-scripts
 My powershell-scripts
