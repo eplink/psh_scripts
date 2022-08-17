@@ -1,0 +1,25 @@
+{
+    "MailServer":   "192.168.1.172",
+    "MailUser":     "o019908@oblgaz56.ru",
+    "MailPassword": "hj9k5g",
+    "Servers": 
+    [
+ 
+               {
+                    "DnsName":      "servavir.oblgaz56.local",
+                    "IncludeArg":   " -include:d:",
+                    "BackupPath":   "//serv-backup.oblgaz56.local/backup/HPV",
+                    "User":         "autoadmin@oblgaz56.local",
+                    "Password":     "autoadmin"
+                },
+                
+                {
+                    "DnsName":      "servavr2.oblgaz56.local",
+                    "IncludeArg":   "",
+                    "BackupPath":   "//192.168.1.167/backup/HPV",
+                    "User":         "autoadmin@oblgaz56.local",
+                    "Password":     "autoadmin"
+                }
+
+    ] 
+}
