@@ -15,26 +15,24 @@ foreach ($Server in $Job.Servers) {                                     # Пар
     $strLogFile = $Server.BackupPath -replace '/', '\' 
     $strLogFile += "\" + $Server.DnsName + ".log"
 
-    $strBackupParam = " -backupTarget:" + $Server.BackupPath -replace '/', '\'
+    $strBackupParam =  " -backupTarget:" + $Server.BackupPath -replace '/', '\'
+    
     $strBackupParam += $Server.IncludeArg
     $strBackupParam += " -allCritical"
     $strBackupParam += " -user:" + $Server.User
     $strBackupParam += " -password:" + $Server.Password
     $strBackupParam += " -quiet"
     
-    $ScriptBlock = [scriptblock]::Create("WBADMIN START BACKUP $strBackupParam") 
-    
-    Invoke-Command -ComputerName $Server.DnsName -ScriptBlock $ScriptBlock | Out-File -LiteralPath $strLogFile
+    $ScriptBlock = [scriptblock]::Create("WBADMIN START BACKUP $strBackupParam")
 
-    # WBADMIN START BACKUP $strBackupParam >> $strLogFile
+    Invoke-Command -ComputerName $Server.DnsName -ScriptBlock $ScriptBlock 
+        | Out-File -LiteralPath $strLogFile -Encoding utf32
 
-    # $strBackupParam = "-backupTarget:" + $strBackupParam 
-    
-    # WBADMIN START BACKUP -backupTarget:\\192.168.1.167\backup\hpv -include:d: -allCritical -user:OBLGAZ56\AUTOADMIN
-    # -password:autoadmin -quiet
+    # WBADMIN START BACKUP -backupTarget:\\192.168.1.167\backup\hpv -include:d: 
+    # -allCritical -user:domain\user -password:pass -quiet
     
     # Write-Host $strBackupParam
-    # Write-Host $strLogFile
+    
 }
 
 # Write-Host $Job.MailServer

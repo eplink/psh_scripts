@@ -11,14 +11,6 @@
                     "BackupPath":   "//serv-backup.oblgaz56.local/backup/HPV",
                     "User":         "autoadmin@oblgaz56.local",
                     "Password":     "autoadmin"
-                },
-                
-                {
-                    "DnsName":      "servavr2.oblgaz56.local",
-                    "IncludeArg":   "",
-                    "BackupPath":   "//192.168.1.167/backup/HPV",
-                    "User":         "autoadmin@oblgaz56.local",
-                    "Password":     "autoadmin"
                 }
 
     ] 
