@@ -1,46 +1,77 @@
-# ./Folders-Backup.ps1 
-#       -backupList 'D:\projects\psh_scripts\Folders-Backup\backup.lst' 
-#       -excludeList 'D:\projects\psh_scripts\Folders-Backup\exclude.lst' -targetFolder 'D:\Backup' 
-#       -archName 'shared_folders' -incrCopy 1
+<#
+    Folders-Backup
+    Version: 1.0.0
+    
+    .SYNOPSIS
+    Backup the specified folders
 
+    .DESCRIPTION   
+    Backup script for the folders specified in the transferred file using the rar.exe console archiver
+    
+    .EXAMPLE
+    ./Folders-Backup.ps1 `
+        -rarFilePath 'c:\rar\rar.exe' `
+        -targetsList 'D:\projects\psh_scripts\Folders-Backup\backup.lst' `
+        -excludesList 'D:\projects\psh_scripts\Folders-Backup\exclude.lst' `
+        -archPath 'D:\Backup' `
+        -archName 'shared_folders' `
+        -isIncrCopy 1
+#>
 
+# to form a string of parameters for the console archiver
 Param ( 
-    [string]$rarPath,
-    [string]$backupList, 
-    [string]$excludeList,
-    [string]$targetFolder,
-    [string]$archName,
-    [bool]$incrCopy
+    [string]$rarFilePath,       # full path to archiever rar.exe
+    [string]$targetsList,       # filepath with archFilePath folders to backup
+    [string]$excludesList,      # filepath with exclusions from backup
+    [string]$archPath,          # archive file destination path
+    [string]$archName,          # archive file name
+    [bool]$isIncrCopy           # is an incremental copy
 )
 
-# todo Сделать прооверку существования файлов переданных параметрами
+# to use default value
+$DEFAULT_INTERNAL_RAR_PATH = '\WinRAR\rar.exe'
+$DEFAULT_ARCHIEVE_NAME = 'shared_folders'
+$DEFAULT_LOGFILE_NAME = 'errors'
 
-if (!$rarPath) {
-    $rarPath = $Env:ProgramFiles + "\WinRAR\rar.exe"
+# to use the default parametrs
+if (!$rarFilePath) {
+    $rarFilePath = $Env:ProgramFiles + $DEFAULT_INTERNAL_RAR_PATH
 }
-
 if (!$archName) {
-    $archName = 'shared_folders'
+    $archName = $DEFAULT_ARCHIEVE_NAME
+}
+if (!$isIncrCopy) {
+    $isIncrCopy = $false
 }
 
-if (!$incrCopy) {
-    $incrCopy = $false
+# to check parameters for errors
+if (!(Test-Path -Path $rarFilePath)) {
+    Write-Host 'Error: Archiver is not detected!'
+    exit 1
+}
+if (!(Test-Path -Path $targetsList)) {
+    Write-Host 'Error: File of backup targets is not exist!'
+    exit 1
+}
+if (!(Test-Path -Path $excludesList)) {
+    Write-Host 'Error: File of excludes is not exist!'
+    exit 1
+}
+if (!(Test-Path -Path $archPath)) {
+    Write-Host 'Error: Path for create archive is no exist!'
+    exit 1
 }
 
+# to create parameters for archiver
+$targetsList  = "@" + $targetsList
+$excludesList = "-x@" + $excludesList
+$logFilePath = '-ilog' + $archPath + '\' + $DEFAULT_LOGFILE_NAME + '_' + (Get-Date).ToString("yyMMddHH") + '.log'
+$archFilePath = $archPath + '\' + $archName + '_' + (Get-Date).ToString('yyMMddHH') + '.rar'
+$keyIncrCopy = ''; if ($isIncrCopy) {$keyIncrCopy = '-ao'}
 
-$backupList  = "@" + $backupList
-$excludeList = "-x@" + $excludeList
+# TODO - create shadov copy of targets
 
-# todo Сделать метку времени созадния в имени файла ошибок
+& $rarFilePath 'A' '-inul' '-ac' $keyIncrCopy $logFilePath '-m5' '-os' '-r' '-rr' '-s' '-t' $excludesList $archFilePath `
+    $targetsList
 
-$logFile = "-ilog" + $targetFolder + "\backup.log"
-$target = $targetFolder + '\' + $archName + ".rar"
-
-
-$command = $rarPath
-
-& $command  'A' '-ac' '-ag_YYMMDDHH' $logFile '-m5' '-os' '-r' '-rr' '-s' '-t' $excludeList $target $backupList
-
-# Write-Host $command
-
-# todo Сделать email репортинг
+# TODO - create error return
