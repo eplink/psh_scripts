@@ -1,6 +1,6 @@
 <#
     Folders-Backup
-    Version: 1.0.0
+    Version: 1.0.1
     
     .SYNOPSIS
     Backup the specified folders
@@ -11,9 +11,9 @@
     .EXAMPLE
     ./Folders-Backup.ps1 `
         -rarFilePath 'c:\rar\rar.exe' `
-        -targetsList 'D:\projects\psh_scripts\Folders-Backup\backup.lst' `
-        -excludesList 'D:\projects\psh_scripts\Folders-Backup\exclude.lst' `
-        -archPath 'D:\Backup' `
+        -targetsList 'D:\projects\backup.lst' `
+        -excludesList 'D:\projects\exclude.lst' `
+        -archPath 'D:\backup' `
         -archName 'shared_folders' `
         -isIncrCopy 1
 #>
@@ -69,9 +69,5 @@ $logFilePath = '-ilog' + $archPath + '\' + $DEFAULT_LOGFILE_NAME + '_' + (Get-Da
 $archFilePath = $archPath + '\' + $archName + '_' + (Get-Date).ToString('yyMMddHH') + '.rar'
 $keyIncrCopy = ''; if ($isIncrCopy) {$keyIncrCopy = '-ao'}
 
-# TODO - create shadov copy of targets
-
-& $rarFilePath 'A' '-inul' '-ac' $keyIncrCopy $logFilePath '-m5' '-os' '-r' '-rr' '-s' '-t' $excludesList $archFilePath `
+& $rarFilePath 'A' '-inul' '-ac' $keyIncrCopy $logFilePath '-m3' '-os' '-r' '-rr' '-s' '-t' $excludesList $archFilePath `
     $targetsList
-
-# TODO - create error return

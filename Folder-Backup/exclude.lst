@@ -1,0 +1,9 @@
+*.tmp
+~*.*
+*.mpg
+*.mp4
+*.avi
+*.wmf
+*.mov
+*.mkv
+*Thumbs.db
