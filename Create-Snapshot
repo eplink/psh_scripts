@@ -1,0 +1,31 @@
+<#
+    Create-Snapshot
+    Version: 1.0.0
+    
+    .SYNOPSIS
+    Backup the specified folder
+
+    .DESCRIPTION
+    Backup script for the specified folder using the rar.exe console archiver and volume shadow copy
+    
+    .EXAMPLE
+    ./Folder-Backup.ps1 `
+        -target 'D:\111' `
+        -exclList 'D:\exclude.lst' `
+        -dest 'D:\backup' `
+        -addTL 1 `
+        -isVSS 1
+        -isIncr 1
+#>
+
+# to form a string of parameters for the console archiver
+Param ( 
+    [string]$target,            # target path for backup
+    [string]$excList,           # filepath with exclusions from backup
+    [string]$dest,              # archive file destination path
+    [bool]$addTL,               # added time label to archive name
+    [bool]$isVSS,               # is an shadow copy with VSS
+    [bool]$isIncrCopy           # is an incremental copy
+)
+
+# TODO do create script body
