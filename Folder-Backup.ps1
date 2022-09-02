@@ -10,64 +10,87 @@
     
     .EXAMPLE
     ./Folder-Backup.ps1 `
-        -target 'D:\111' `
-        -exclList 'D:\exclude.lst' `
-        -dest 'D:\backup' `
-        -addTL 1 `
-        -isVSS 1
-        -isIncr 1
+        -Target 'D:\111' `
+        -ExcList 'D:\projects\psh_scripts\Folder-Backup\exclude.lst' `
+        -Dest 'D:\Backup' `
+        -AddTL 1 `
+        -IsIncr 1
 #>
 
 # to form a string of parameters for the console archiver
 Param ( 
-    [string]$target,            # target path for backup
-    [string]$excList,           # filepath with exclusions from backup
-    [string]$dest,              # archive file destination path
-    [bool]$addTL,               # added time label to archive name
-    [0..5]$CompressRatio,       #     
-    [bool]$isIncrCopy           # is an incremental copy
+    [string]$Target,            # target path for backup
+    [string]$ExcList,           # filepath with exclusions from backup
+    [string]$Dest,              # archive file destination path
+    [byte]$CompressRatio,       # archive ration of comression
+    [bool]$AddTL,               # added time label to archive name
+    [bool]$IsIncrCopy           # is an incremental copy
 )
+
+# to retun results of work
+$Result = @{
+    [bool]$ErrorFlag = $false
+    [string]$Message = ''
+    [string]$Result = ''
+    [string]$Log = ''
+}
 
 # to use the default parametrs
 $RAR_FILE_PATH = $Env:ProgramFiles + '\WinRAR\rar.exe'
-if (!$addTL) { $addTL = $true }
-if (!$isIncrCopy) { $isIncrCopy = $false }
+if (!$AddTL) { $AddTL = $true }
+if (!$IsIncrCopy) { $IsIncrCopy = $false }
 
 # to check parameters for errors
 if (!(Test-Path -Path $RAR_FILE_PATH)) {
-    Write-Host 'Error: Archiver is not detected!'
-    exit 1
+    $Result.ErrorFlag = 1
+    $Result.Message = "Error: Archiver Rar.exe not found!"
+    Write-Host $Result.Message
+    exit $Result
 }
-if (!(Test-Path -Path $target)) {
-    Write-Host 'Error: Backup target is not exist!'
-    exit 1
+if (!(Test-Path -PaTh $Target)) {
+    $Result.ErrorFlag = 1
+    $Result.Message = "Error: Backup target is not exist!"
+    Write-Host $Result.Message
+    exit $Result
 }
-if (!(Test-Path -Path $excList)) {
-    Write-Host 'Error: File of excludes is not exist!'
-    exit 1
+if (!(Test-Path -Path $ExcList)) {
+    $Result.ErrorFlag = 1
+    $Result.Message = "Error: File of excludes is not exist!"
+    Write-Host $Result.Message
+    exit $Result
 }
-if (!(Test-Path -Path $dest)) {
-    Write-Host 'Error: Path for create archive is no exist!'
-    exit 1
+if (!(Test-Path -Path $Dest)) {
+    $Result.ErrorFlag = 1
+    $Result.Message = "Error: Path of destinations is not exist!"
+    Write-Host $Result.Message
+    exit $Result
+}
+if (!($CompressRatio in 0..5)) {
+    $Result.ErrorFlag = 1
+    $Result.Message = "Error: Compression ratio is not in the range from 0 to 5!"
+    Write-Host $Result.Message
+    exit $Result
 }
 
 # to create parameters for archiver
-$excList = "-x@" + $excList
+$ExcList = "-x@" + $ExcList
 
-$archName = Split-Path $target -Leaf        # extract the last segment of the path
-if ($addTL) {
-    $archName = $archName + '_' + (Get-Date).ToString('yyMMddHH')
+$ArchName = Split-PaTh $Target -Leaf        # extract the last segment of the path
+if ($AddTL) {
+    $ArchName = $ArchName + '_' + (Get-Date).ToString('yyMMddHH')
 }
-$logName = $archName + '.err'
-$archName = $archName + '.rar'
+$LogName = $ArchName + '.err'
+$ArchName = $ArchName + '.rar'
 
-$logFilePath = '-ilog' + $dest + '\' + $logName
-$archFilePath = $dest + '\' + $archName
+$LogFilePath = '-ilog' + $Dest + '\' + $LogName
+$ArchFilePath = $Dest + '\' + $ArchName
 
-[string]$keyIncrCopy 
-if ($isIncrCopy) {
-    $keyIncrCopy = '-ao'
+[string]$KeyIncrCopy 
+if ($IsIncrCopy) {
+    $KeyIncrCopy = '-ao'
 }
 
-& $RAR_FILE_PATH 'A' '-inul' '-ac' $keyIncrCopy $logFilePath '-m3' '-os' '-r' '-rr' '-s' '-t' $excludesList `
-    $archFilePath $target
+Write-Host $RAR_FILE_PATH 'A' '-inul' '-ac' $KeyIncrCopy $LogFilePath '-m3' '-os' '-r' '-rr' '-s' '-t' $ExcludesList `
+    $ArchFilePaTh $Target
+
+exit $Result
