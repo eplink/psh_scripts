@@ -6,3 +6,5 @@
 ` Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI" `
 ### Создание папки
 ` New-Item -Path 'C:\Dir\' -ItemType Directory `
+### Сменить текущую папку
+` Set-Location -Path C:\Windows `

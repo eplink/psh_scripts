@@ -1,0 +1,28 @@
+.SYNOPSIS
+ New-Archive creates archive of target
+        
+.DESCRIPTION
+ This function uses the internal archiver to create archive of target object
+
+.PARAMETER Target
+ Specify the path to the target folder or file
+
+.PARAMETER AddTimeLabel
+ Specify whether to add a timestamp to the archive name
+
+.PARAMETER CompressRatio
+ Specify the file compression ratio from 0 to 2
+    0 - NoCompression
+    1 - Fastest
+    2 - Optimal
+
+.PARAMETER ExcludeRatio
+ Specify the ratio exclude files from archive
+    0 - include all files
+    1 - exclude only temp files
+    2 - exclude temp and video files
+    3 - exclude temp, video and audio files
+
+.EXAMPLE
+ creates RAR archive of folder with timelabel
+ RarArchive-Create -Target "D:\111\ССW" -AddTimeLabel $true -ExcludeRatio 1
